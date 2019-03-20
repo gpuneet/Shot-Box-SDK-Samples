@@ -24,16 +24,15 @@ namespace OnlineUpdate
 
         #endregion
 
-        private                 ShotBox                          m_objShotBox = null;
-        private                 Link                             m_objLink = null;
-        private                 LinkManager                      m_objLinkManager = null;
-        private                 string                           m_sServerIp = string.Empty;
-        private                 string                           m_sLinkType = string.Empty;
-        private                 string                           m_sPort = string.Empty;
-        private                 bool                             m_bIsPause = false;
-        private                 UserTagCollection                m_objUserTag;
-        private                 FileInfo                         m_objFileInfo = null;
-        private                 const string                     MODULENAME = "WASP";
+        private ShotBox m_objShotBox = null;
+        private Link m_objLink = null;
+        private LinkManager m_objLinkManager = null;
+        private string m_sServerIp = string.Empty;
+        private string m_sLinkType = string.Empty;
+        private string m_sPort = string.Empty;
+        bool m_bIsPause = false;
+        private UserTagCollection m_objUserTag;
+        private FileInfo m_objFileInfo = null;
 
         #endregion
 
@@ -43,12 +42,10 @@ namespace OnlineUpdate
         public frmOnline()
         {
             InitializeComponent();
-        }//end (frmOnline)
+        }
 
         #endregion
 
-
-        #region events
 
         /// <summary>
         /// fires when engine is connected
@@ -58,8 +55,7 @@ namespace OnlineUpdate
         void objLink_OnEngineConnected(object sender, EngineArgs e)
         {
             btnConnect.BackColor = Color.DarkGreen;
-        }//end (objLink_OnEngineConnected)
-
+        }
 
         /// <summary>
         /// used to connect with the server
@@ -80,18 +76,16 @@ namespace OnlineUpdate
                         default:
                             m_sServerIp = string.Format(m_sUrl, txtServerIp.Text, m_sPort);
                             break;
-                    }//end (switch)
+                    }
                     m_objLink.Connect(m_sServerIp);
-                }//end (if)
+                }
 
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnConnect_Click_1)
-
-
+                LogWriter.WriteLog("connecting", ex.Message);
+            }
+        }
         /// <summary>
         /// used for preparing the scenegraph
         /// </summary>
@@ -102,7 +96,6 @@ namespace OnlineUpdate
             string sXml = string.Empty;
             string sShotBoxID = null;
             bool isTicker;
-            string filetype = string.Empty;
             try
             {
                 #region sceneone
@@ -110,7 +103,6 @@ namespace OnlineUpdate
                 if (m_objShotBox == null)
                 {
                     sXml = Util.getSGFromWSL(fileDialog.FileName);
-                    filetype = Path.GetExtension(fileDialog.FileName).Split(new string[] {"." }, StringSplitOptions.None)[1];
                     if (!string.IsNullOrEmpty(sXml))
                     {
                         m_objShotBox = m_objLink.GetShotBox(sXml, out sShotBoxID, out isTicker) as ShotBox;
@@ -118,31 +110,35 @@ namespace OnlineUpdate
                         {
                             m_objShotBox.SetEngineUrl(m_sServerIp);
                             if (m_objShotBox is IAddinInfo)
-                                (m_objShotBox as IAddinInfo).Init(new InstanceInfo() { Type = filetype, InstanceId = string.Empty, TemplateId = fileDialog.FileName, ThemeId = "default" });
+                            {
+                                // S.No.			: -	1
+                                //(m_objShotBox as IAddinInfo).Init(new InstanceInfo() { Type = "wsl", InstanceId = string.Empty, TemplateId = fileDialog.FileName, ThemeId = "default" });
+                                (m_objShotBox as IAddinInfo).Init(new InstanceInfo() { Type = "wsl", InstanceId = fileDialog.FileName, TemplateId = fileDialog.FileName, ThemeId = "default" });
+                        
+                            }
                             m_objShotBox.OnShotBoxStatus += new EventHandler<SHOTBOXARGS>(m_objShotBox_OnShotBoxStatus);
                             m_objShotBox.Prepare(m_sServerIp, 0, RENDERMODE.PROGRAM);
 
-                        }//end (if)
+                        }
                         m_objUserTag = m_objShotBox.UserTags;
-                       
+                        //  if (cmbUserTag.SelectedIndex==-1)
+                        // {
                         for (int i = 0; i < m_objUserTag.Count; i++)
                         {
                             if (!cmbUserTag.Items.Contains(m_objUserTag[i].Name))
                                 cmbUserTag.Items.Add(m_objUserTag[i].Name);
-                        }//end (for)
-                        
-                    }//end (if)
-                }//end (if)
+                        }
+                        // }
+                    }
+                }
                 #endregion
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in preparing the scenegraph", ex.Message);
+            }
 
-        }//end (btnLoadScene_Click_1)
-
-
+        }
         /// <summary>
         /// this event fires when scenegraph is loaded
         /// </summary>
@@ -154,10 +150,8 @@ namespace OnlineUpdate
             {
                 btnPlay.BackColor = Color.DarkGreen;
                 btnProgram.BackColor = Color.DarkGreen;
-            }//end (if)
-        }//end (m_objShotBox_OnShotBoxStatus)
-
-
+            }
+        }
         /// <summary>
         /// used to selecting the scenegraph
         /// </summary>
@@ -167,7 +161,7 @@ namespace OnlineUpdate
         {
             try
             {
-                fileDialog.Filter = "wsl or w3d files (*.wsl;*.w3d)|*.wsl;*.w3d";
+                fileDialog.Filter = "wsl files|*.wsl";
                 fileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 if (Equals(fileDialog.ShowDialog(), DialogResult.OK))
                 {
@@ -176,17 +170,15 @@ namespace OnlineUpdate
                     m_objFileInfo = new FileInfo(fileDialog.FileName);
                     txtSceneName.Text = m_objFileInfo.Name;
                     txtSceneName.Tag = m_objFileInfo.FullName;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in selecting the scenegraph", ex.Message);
+            }
 
 
-        }//end (btnFileDialog_Click_1)
-
-
+        }
         /// <summary>
         /// used to play the scenegraph
         /// </summary>
@@ -202,19 +194,17 @@ namespace OnlineUpdate
                     if (!m_bIsPause)
                     {
                         m_objShotBox.Play(true, true);
-                    }//end (if)
+                    }
                     else
                         m_objShotBox.Play(false, false);
                     m_bIsPause = false;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnPlay_Click_1)
-
-
+                LogWriter.WriteLog("error in playing the scenegraph", ex.Message);
+            }
+        }
         /// <summary>
         /// used to pause the scenegraph
         /// </summary>
@@ -229,15 +219,13 @@ namespace OnlineUpdate
                     btnPause.BackColor = Color.DarkGray;
                     m_objShotBox.Pause();
                     m_bIsPause = true;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnPause_Click_1)
-
-
+                LogWriter.WriteLog("error in pausing the scenegraph", ex.Message);
+            }
+        }
         /// <summary>
         /// used to stop the scenegraph
         /// </summary>
@@ -252,16 +240,14 @@ namespace OnlineUpdate
                     btnStop.BackColor = Color.DarkGray;
                     m_objShotBox.Stop();
                     m_bIsPause = false;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in stoping the scenegraph", ex.Message);
+            }
 
-        }//end (btnStop_Click_1)
-
-
+        }
         /// <summary>
         /// used to taking the scenegraph on air
         /// </summary>
@@ -276,15 +262,13 @@ namespace OnlineUpdate
                     m_objShotBox.SetRender(true);
                     btnOnAir.BackColor = Color.DarkGray;
                     btnOffAir.BackColor = Color.DarkGreen;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnOnAir_Click_1)
-
-
+                LogWriter.WriteLog("error in taking the scenegraph on air", ex.Message);
+            }
+        }
         /// <summary>
         /// used to taking the scenegraph off air
         /// </summary>
@@ -299,21 +283,21 @@ namespace OnlineUpdate
                     m_objShotBox.SetRender(false);
                     btnOnAir.BackColor = Color.DarkGreen;
                     btnOffAir.BackColor = Color.DarkGray;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in taking the scenegraph off air", ex.Message);
+            }
 
-        }//end (btnOffAir_Click_1)
-
+        }
 
         /// <summary>
         /// used to setting the mode as program
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+
         private void btnProgram_Click_1(object sender, EventArgs e)
         {
             try
@@ -323,15 +307,13 @@ namespace OnlineUpdate
                     m_objShotBox.SetMode(RENDERMODE.PROGRAM);
                     btnProgram.BackColor = Color.DarkGray;
                     btnPreview.BackColor = Color.DarkGreen;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnProgram_Click_1)
-
-
+                LogWriter.WriteLog("error in setting the mode:program", ex.Message);
+            }
+        }
         /// <summary>
         /// used to setting the mode as preview
         /// </summary>
@@ -346,15 +328,13 @@ namespace OnlineUpdate
                     m_objShotBox.SetMode(RENDERMODE.PREVIEW);
                     btnPreview.BackColor = Color.DarkGray;
                     btnProgram.BackColor = Color.DarkGreen;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnPreview_Click_1)
-
-
+                LogWriter.WriteLog("error in setting the mode:preview", ex.Message);
+            }
+        }
         /// <summary>
         /// used to update the scenegraph
         /// </summary>
@@ -372,21 +352,19 @@ namespace OnlineUpdate
                         tagData = new TagData();
                         tagData.IsOnAirUpdate = true;
                         tagData.SgXml = Util.getSGFromWSL(fileDialog.FileName);
-                        tagData.TagType = new DataTargetType[] { DataTargetType.UserTag };
+                        
                         tagData.UserTags = new string[] { cmbUserTag.SelectedItem.ToString() };
                         tagData.Values = new string[] { txtUserValue.Text };
                         tagData.Indexes = new string[] { "-1" };
                         m_objShotBox.UpdateSceneGraph(tagData);
-                    }//end (if)
-                }//end (if)
-            }//end (try)
+                    }
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnUpdate_Click_1)
-
-
+                LogWriter.WriteLog("error in updating the scenegraph", ex.Message);
+            }
+        }
         /// <summary>
         /// used to getting the link
         /// </summary>
@@ -408,19 +386,18 @@ namespace OnlineUpdate
                         m_objLink = m_objLinkManager.GetLink(LINKTYPE.TCP, out sLinkID);
                     if (string.Compare(m_sLinkType, "NAMEDPIPE", StringComparison.OrdinalIgnoreCase) == 0)
                         m_objLink = m_objLinkManager.GetLink(LINKTYPE.NAMEDPIPE, out sLinkID);
-                }//end (if)
+                }
                 if (!Equals(m_objLink, null))
                 {
                     m_objLink.OnEngineConnected += new EventHandler<EngineArgs>(objLink_OnEngineConnected);
-                }//end (if)
+                }
                 this.FormClosing += new FormClosingEventHandler(frmOnline_FormClosing);
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (frmOnline_Load)
-
+                LogWriter.WriteLog("loading", ex.Message);
+            }
+        }
 
         void frmOnline_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -429,22 +406,18 @@ namespace OnlineUpdate
                 if (!Equals(m_objShotBox, null))
                 {
                     m_objShotBox.DeleteSg();
-                }//end (if)
+                }
                 if (!Equals(m_objLink, null))
                 {
                     m_objLink.DisconnectAll();
-                }//end (if)
+                }
 
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (frmOnline_FormClosing)
-
-        #endregion
-
-   
+                LogWriter.WriteLog("error in form closing", ex.Message);
+            }
+        }
 
     }
 }

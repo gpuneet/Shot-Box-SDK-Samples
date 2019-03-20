@@ -11,9 +11,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Beehive Systems Ltd")]
 [assembly: AssemblyProduct("WASP3D")]
 [assembly: AssemblyCopyright("© Beehive Systems Ltd. All rights reserved.")]
-[assembly: AssemblyInformationalVersion("2015")]
+[assembly: AssemblyInformationalVersion("2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -34,4 +35,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.50.15000.10206")]
+[assembly: AssemblyFileVersion("3.91.17000.11017")]

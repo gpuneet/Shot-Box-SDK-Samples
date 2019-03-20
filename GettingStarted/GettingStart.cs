@@ -16,34 +16,20 @@ namespace GettingStarted
     public partial class GettingStart : Form
     {
 
-        #region class members
+        private ShotBox m_objShotBox = null;
+        private Link m_objLink = null;
+        private LinkManager m_objLinkManager = null;
+        private string m_sServerIp = string.Empty;
 
-        private              ShotBox                      m_objShotBox = null;
-        private              Link                         m_objLink = null;
-        private              LinkManager                  m_objLinkManager = null;
-        private              string                       m_sServerIp = string.Empty;
-        private              string                       m_sUrl = "net.tcp://{0}:{1}/TcpBinding/WcfTcpLink";
-        private              bool                         m_isPause = false;
-        private              FileInfo                     m_objFileInfo = null;
-        private              string                       m_sLinkType = string.Empty;
-        private              string                       m_sPort = string.Empty;
-        private              const string                 MODULENAME = "WASP";
-
-        #endregion
-
-
-        #region constructor
-
+        private string m_sUrl = "net.tcp://{0}:{1}/TcpBinding/WcfTcpLink";
+        bool m_isPause = false;
+        private FileInfo m_fileInfo = null;
+        private string m_sLinkType = string.Empty;
+        private string m_sPort = string.Empty;
         public GettingStart()
         {
             InitializeComponent();
-        }//end (GettingStart)
-
-        #endregion
-
-
-        #region Events
-
+        }
         /// <summary>
         /// used to connect with the server
         /// </summary>
@@ -65,19 +51,17 @@ namespace GettingStarted
                         default:
                             m_sServerIp = string.Format(m_sUrl, txtServerIp.Text, m_sPort);
                             break;
-                    }//end (switch)
+                    }
                     m_objLink.Connect(m_sServerIp);
-                }//end (if)
+                }
 
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("connecting", ex.Message);
+            }
 
-        }//end (btnConnect_Click)
-
-
+        }
         /// <summary>
         /// fires when engine is connected
         /// </summary>
@@ -86,7 +70,7 @@ namespace GettingStarted
         void objLink_OnEngineConnected(object sender, EngineArgs e)
         {
             btnConnect.BackColor = Color.DarkGreen;
-        }//end (objLink_OnEngineConnected)
+        }
 
 
         /// <summary>
@@ -99,17 +83,18 @@ namespace GettingStarted
             try
             {
                 if (!Equals(m_objShotBox, null))
+                {
                     m_objShotBox.DeleteSg();
+                }
                 if (!Equals(m_objLink, null))
                     m_objLink.DisconnectAll();
-            }//end (try)
+
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (GettingStart_FormClosing)
-
-
+                LogWriter.WriteLog("error in form closing", ex.Message);
+            }
+        }
         /// <summary>
         /// used to selecting the scenegraph
         /// </summary>
@@ -119,20 +104,19 @@ namespace GettingStarted
         {
             try
             {
-                openFileDialog1.Filter = "wsl or w3d files (*.wsl;*.w3d)|*.wsl;*.w3d";
+                openFileDialog1.Filter = "wsl files|*.wsl";
                 openFileDialog1.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 if (Equals(openFileDialog1.ShowDialog(), DialogResult.OK))
                 {
-                    m_objFileInfo = new FileInfo(openFileDialog1.FileName);
-                    txtSceneName.Text = m_objFileInfo.Name;
-                }//end (if)
-            }//end (try)
+                    m_fileInfo = new FileInfo(openFileDialog1.FileName);
+                    txtSceneName.Text = m_fileInfo.Name;
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (btnFileDialog_Click)
-
+                LogWriter.WriteLog("error in selecting the scenegraph", ex.Message);
+            }
+        }
 
         /// <summary>
         /// used to setting the mode as program
@@ -148,16 +132,14 @@ namespace GettingStarted
                     m_objShotBox.SetMode(RENDERMODE.PROGRAM);
                     btnProgram.BackColor = Color.DarkGray;
                     btnPreview.BackColor = Color.DarkGreen;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in setting the mode:program", ex.Message);
+            }
 
-        }//end (btnProgram_Click)
-
-
+        }
         /// <summary>
         /// used to setting the mode as preview
         /// </summary>
@@ -172,16 +154,14 @@ namespace GettingStarted
                     m_objShotBox.SetMode(RENDERMODE.PREVIEW);
                     btnPreview.BackColor = Color.DarkGray;
                     btnProgram.BackColor = Color.DarkGreen;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in setting the mode:preview", ex.Message);
+            }
 
-        }//end (btnPreview_Click)
-
-
+        }
         /// <summary>
         /// used to pause the scenegraph
         /// </summary>
@@ -196,16 +176,14 @@ namespace GettingStarted
                     btnPause.BackColor = Color.DarkGray;
                     m_objShotBox.Pause();
                     m_isPause = true;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in pausing the scenegraph", ex.Message);
+            }
 
-        }//end (btnPause_Click)
-
-
+        }
         /// <summary>
         /// used to stop the scenegraph
         /// </summary>
@@ -220,16 +198,14 @@ namespace GettingStarted
                     btnStop.BackColor = Color.DarkGray;
                     m_objShotBox.Stop();
                     m_isPause = false;
-                }//end (if)
-            }//end (try)
+                }
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in stoping the scenegraph", ex.Message);
+            }
 
-        }//end (btnStop_Click)
-
-
+        }
         /// <summary>
         /// used to play the scenegraph
         /// </summary>
@@ -245,22 +221,22 @@ namespace GettingStarted
                     if (!m_isPause)
                     {
                         m_objShotBox.Play(true, true);
-                    }//end (if)
+                    }
                     else
                         m_objShotBox.Play(false, false);
                     m_isPause = false;
-                }//end (if)
+                }
 
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in playing the scenegraph", ex.Message);
+            }
 
 
-        }//end (btnPlay_Click)
 
 
+        }
         /// <summary>
         /// used for preparing the scenegraph
         /// </summary>
@@ -271,46 +247,42 @@ namespace GettingStarted
             try
             {
                 #region sceneone
-                string sSgxml = Util.getSGFromWSL(openFileDialog1.FileName);
+                string xml = Util.getSGFromWSL(openFileDialog1.FileName);
                 string shotBoxID = null;
                 bool isTicker;
-                string filetype = string.Empty;
 
-                if (!string.IsNullOrEmpty(sSgxml))
+                if (!string.IsNullOrEmpty(xml))
                 {
 
-                    m_objShotBox = m_objLink.GetShotBox(sSgxml, out shotBoxID, out isTicker) as ShotBox;
-                    filetype = Path.GetExtension(openFileDialog1.FileName).Split(new string[] { "." }, StringSplitOptions.None)[1];
+                    m_objShotBox = m_objLink.GetShotBox(xml, out shotBoxID, out isTicker) as ShotBox;
                     if (!Equals(m_objShotBox, null))
                     {
                         m_objShotBox.SetEngineUrl(m_sServerIp);
                         if (m_objShotBox is IAddinInfo)
-                            (m_objShotBox as IAddinInfo).Init(new InstanceInfo() 
-                            {
-                                Type = filetype, 
-                                InstanceId = string.Empty, 
-                                TemplateId = openFileDialog1.FileName, 
-                                ThemeId = "default",
-                                 IsPreview=false
-                            });
+                        {
+                            //S.No.			: -	1
+                            // (m_objShotBox as IAddinInfo).Init(new InstanceInfo() { Type = "wsl", InstanceId = string.Empty, TemplateId = openFileDialog1.FileName, ThemeId = "default" });
+                            (m_objShotBox as IAddinInfo).Init(new InstanceInfo() { Type = "wsl", InstanceId = openFileDialog1.FileName, TemplateId = openFileDialog1.FileName, ThemeId = "default" });
+                        }
                         m_objShotBox.OnShotBoxStatus += new EventHandler<SHOTBOXARGS>(m_objShotBox_OnShotBoxStatus);
+
                         m_objShotBox.Prepare(m_sServerIp, 0, RENDERMODE.PROGRAM);
 
-                    }//end (if)
+                    }
 
-                }//end (if)
+                }
                 #endregion
 
 
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
+                LogWriter.WriteLog("error in preparing the scenegraph", ex.Message);
+            }
 
 
-        }//end (btnLoadScene_Click)
 
+        }
         /// <summary>
         /// this event fires when scenegraph is loaded
         /// </summary>
@@ -322,10 +294,8 @@ namespace GettingStarted
             {
                 btnPlay.BackColor = Color.DarkGreen;
                 btnProgram.BackColor = Color.DarkGreen;
-            }//end (if)
-        }//end (m_objShotBox_OnShotBoxStatus)
-
-
+            }
+        }
         /// <summary>
         /// used to getting the link
         /// </summary>
@@ -348,23 +318,18 @@ namespace GettingStarted
                     if (string.Compare(m_sLinkType, "NAMEDPIPE", StringComparison.OrdinalIgnoreCase) == 0)
                         m_objLink = m_objLinkManager.GetLink(LINKTYPE.NAMEDPIPE, out sLinkID);
 
-                }//end (if)
+                }
 
                 if (!Equals(m_objLink, null))
                     m_objLink.OnEngineConnected += new EventHandler<EngineArgs>(objLink_OnEngineConnected);
 
                 this.FormClosing += new FormClosingEventHandler(GettingStart_FormClosing);
 
-            }//end (try)
+            }
             catch (Exception ex)
             {
-                LogWriter.WriteLog(MODULENAME, ex);
-            }//end (catch)
-        }//end (GettingStart_Load)
-
-        #endregion
-
-
-     
+                LogWriter.WriteLog("loading", ex.Message);
+            }
+        }
     }
 }

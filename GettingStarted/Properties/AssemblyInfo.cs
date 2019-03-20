@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Beehive Systems Ltd")]
 [assembly: AssemblyProduct("WASP3D")]
 [assembly: AssemblyCopyright("© Beehive Systems Ltd. All rights reserved.")]
-[assembly: AssemblyInformationalVersion("2015")]
+[assembly: AssemblyInformationalVersion("2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.50.15000.10206")]
+[assembly: AssemblyFileVersion("3.91.17000.11017")]
+
